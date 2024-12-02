@@ -60,6 +60,7 @@ library
 
     -- Modules exported by the library.
     exposed-modules:
+      Day2
       Day1
 
     -- Modules included in this library but not exported.
