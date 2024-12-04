@@ -60,11 +60,13 @@ library
 
     -- Modules exported by the library.
     exposed-modules:
+      Day3
       Day2
       Day1
 
     -- Modules included in this library but not exported.
-    other-modules: Parser
+    other-modules: 
+      Parser
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
