@@ -1,6 +1,8 @@
+{-# LANGUAGE TupleSections #-}
+
 module Day4 where
 
-import Data.List (findIndices)
+import Data.List (elemIndices)
 
 main :: IO ()
 main = do
@@ -9,19 +11,16 @@ main = do
 
   -- Part One
   let gridCoords = coordGenerator grid
-      xmasCount = sum $ map (\coord -> (checkForXmas grid coord)) gridCoords
+      xmasCount = sum $ map (checkForXmas grid) gridCoords
   print xmasCount
 
   -- Part Two
   let gridHeight = length grid
-      gridWidth = length (grid !! 0)
+      gridWidth = length (head grid)
       -- Create a 1-element border around search area (to avoid OOB errors)
       boundedCoords = coordBoundedGenerator 1 (gridWidth - 1) 1 (gridHeight - 1)
-      countXmas = length $ filter (\coord -> (checkForMASX grid coord)) boundedCoords
+      countXmas = length $ filter (checkForMASX grid) boundedCoords
   print countXmas
-
--- let result = (show $ map (getArea grid) countXmas) ++ "\n"
--- writeFile "newFile.txt" result
 
 type Grid = [[Char]]
 
@@ -34,15 +33,15 @@ xmas'x'Coordinates grid =
   concatMap
     ( \(y, row) ->
         map
-          (\x -> (x, y))
-          (findIndices ((==) 'X') row)
+          (,y)
+          (elemIndices 'X' row)
     )
     (zip ([0 ..] :: [Int]) grid)
 
 coordGenerator :: Grid -> [Coordinates]
 coordGenerator grid =
   [ (x, y)
-    | x <- [0 .. length (grid !! 0) - 1],
+    | x <- [0 .. length (head grid) - 1],
       y <- [0 .. length grid - 1]
   ]
 
@@ -53,14 +52,11 @@ checkStr :: Grid -> Coordinates -> Offset -> String -> Bool
 checkStr _ _ _ [] = True
 -- Read Character in Offset and Compare to next Character
 checkStr grid (x, y) (x', y') (s : ss) =
-  -- if
-  if (0 <= x && x < length (grid !! 0)) && (0 <= y && y < length grid)
-    then
-      getCoordValue grid (x, y) == s
-        -- Recursively call checkStr with shortened string and applied offset
-        && (checkStr grid (x + x', y + y') (x', y') ss)
-    else
-      False
+  ((0 <= x && x < length (head grid)) && (0 <= y && y < length grid))
+    && ( getCoordValue grid (x, y) == s
+           -- Recursively call checkStr with shortened string and applied offset
+           && checkStr grid (x + x', y + y') (x', y') ss
+       )
 
 checkForXmas :: Grid -> Coordinates -> Int
 checkForXmas grid coordinates =
@@ -92,14 +88,4 @@ checkForMASX grid coord@(x, y) =
         -- Check for 2 'S's on diagonal
         && length ss == 2
         -- Check Diagonal is not equal
-        && head diagonals /= head (reverse diagonals)
-
--- getArea :: Grid -> Coordinates -> [String]
--- getArea grid (x, y) =
---   [ [coordValue (x - 1, y - 1), coordValue (x, y - 1), coordValue (x + 1, y - 1)],
---     [coordValue (x - 1, y), coordValue (x, y), coordValue (x + 1, y)],
---     [coordValue (x - 1, y + 1), coordValue (x, y + 1), coordValue (x + 1, y + 1)]
---   ]
---   where
---     coordValue :: Coordinates -> Char
---     coordValue = getCoordValue grid
+        && head diagonals /= last diagonals
