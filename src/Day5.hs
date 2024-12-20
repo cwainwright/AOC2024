@@ -1,5 +1,6 @@
 module Day5 where
 
+import Data.List (find, partition, sortBy)
 import Parser (Parser (..), characterP, commaSeparated, numberP, whitespaceP)
 
 main :: IO ()
@@ -9,8 +10,14 @@ main = do
   case (parseData file_lines) of
     Just (orderingRules, pageNumbers) -> do
       -- Part One
-      let inOrder = filter (checkLineOrder orderingRules) pageNumbers
-      print $ sum (map (\xs -> xs !! ((length xs) `div` 2)) inOrder)
+      let (inOrder, outOrder) = partition (checkLineOrder orderingRules) pageNumbers
+      putStrLn "Part One"
+      print $ sumMiddles inOrder
+
+      -- Part Two
+      putStrLn "Part Two"
+      let reOrdered = map (reOrder orderingRules) outOrder
+      print $ sumMiddles reOrdered
     Nothing -> print "Nothing"
 
 type PageOrderingRule = (Int, Int)
@@ -52,7 +59,14 @@ pairAfter xs = concatMap (\(i, a) -> map (\b -> (a, b)) (drop i xs)) (enumerate 
 checkLineOrder :: [PageOrderingRule] -> PageNumbers -> Bool
 checkLineOrder orderingRules pageNumbers = not (any (\pair -> any (\(a, b) -> (b, a) == pair) orderingRules) (pairAfter pageNumbers))
 
--- evaluateOrder :: [PageOrderingRule] -> PageNumbers -> Bool
--- evaluateOrder orderingRules numbers = do
---   let pairs = pairWithNext numbers
---   True
+sumMiddles :: [PageNumbers] -> Int
+sumMiddles = sum . map (\xs -> xs !! ((length xs) `div` 2))
+
+reOrder :: [PageOrderingRule] -> PageNumbers -> PageNumbers
+reOrder orderingRules = sortBy (orderPageNumbers orderingRules)
+
+orderPageNumbers :: [PageOrderingRule] -> Int -> Int -> Ordering
+orderPageNumbers orderingRules pageNum1 pageNum2 = do
+  case find (\(a, b) -> (a == pageNum1 && b == pageNum2) || (a == pageNum2 && b == pageNum1)) orderingRules of
+    Just (ar, _) -> if ar == pageNum1 then LT else GT
+    Nothing -> EQ
