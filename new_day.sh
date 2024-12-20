@@ -13,14 +13,27 @@ fi
 # Cast to Integer
 DAY=$((DAY))
 
-NEW_FILE="src/Day${DAY}.hs"
-
+HS_FILE="src/Day${DAY}.hs"
 # Create the new Haskell file
-if [[ -e "$NEW_FILE" ]]; then
-  echo "File $NEW_FILE exists"
-else 
-  echo "module Day${DAY} where" > $NEW_FILE
-  echo "Created $NEW_FILE."
+if [[ -e "$HS_FILE" ]]; then
+  echo "File $HS_FILE exists"
+else
+  { 
+    echo "module Day${DAY} where"
+    echo ""
+    echo "main :: IO ()"
+    echo "main = do"
+    echo "  file_contents <- readFile \"data/D${DAY}.txt\""
+    echo "  putStrLn file_contents"
+  } >> $HS_FILE
+fi
+
+DATA_FILE="data/D${DAY}.txt"
+# Create new Data File
+if [[ -e "$DATA_FILE" ]]; then
+  echo "File $DATA_FILE exists"
+else
+  touch $DATA_FILE
 fi
 
 # Update the .cabal file
