@@ -7,14 +7,14 @@ import Prelude hiding ((||))
 type YXS = (Int, [Int])
 
 (||) :: Int -> Int -> Int
-(||) a b = read $ (show a) ++ (show b)
+(||) a b = read $ show a ++ show b
 
 main :: IO ()
 main = do
   file_contents <- readFile "data/D7.txt"
   let file_lines = lines file_contents
 
-  let maybexyss = sequence $ map (fmap fst) $ map (parse parseAnswerValues) file_lines
+  let maybexyss = mapM (fmap fst . parse parseAnswerValues) file_lines
   case maybexyss of
     Nothing -> print "Nothing"
     Just xyss -> do
@@ -42,9 +42,9 @@ parseAnswerValues = do
       )
   return (result, values)
 
-attemptSolve :: [(Int -> Int -> Int)] -> YXS -> Bool
+attemptSolve :: [Int -> Int -> Int] -> YXS -> Bool
 attemptSolve _ (_, []) = undefined
-attemptSolve _ (y, (x : [])) = y == x
-attemptSolve operators (y, (x1 : x2 : xs)) =
+attemptSolve _ (y, [x]) = y == x
+attemptSolve operators (y, x1 : x2 : xs) =
   let x's = map (\op -> x1 `op` x2) operators
-   in any (\x' -> attemptSolve operators (y, (x' : xs))) x's
+   in any (\x' -> attemptSolve operators (y, x' : xs)) x's
