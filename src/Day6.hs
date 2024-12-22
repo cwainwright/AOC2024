@@ -33,12 +33,12 @@ main = do
           }
 
   -- Part One
-  finalGrid1 <- fmap grid $ runMap iterMap initialState
+  finalGrid1 <- grid <$> runMap iterMap initialState
   mapM_ putStrLn finalGrid1
   print $ countGridX finalGrid1
 
   -- Part Two
-  finalGrid2 <- fmap grid $ runMap iterMap2 initialState
+  finalGrid2 <- grid <$> runMap iterMap2 initialState
   mapM_ putStrLn finalGrid2
   print $ countGridRoute finalGrid2
 
@@ -169,7 +169,7 @@ runMap :: MapState Bool -> Map -> IO Map
 runMap iter = execStateT (runWhileTrue iter)
 
 countGridX :: [[Char]] -> Int
-countGridX = sum . map (\row -> length $ filter (== 'X') row)
+countGridX = sum . map (length . filter (== 'X'))
 
 countGridRoute :: [[Char]] -> Int
-countGridRoute = sum . map (\row -> length $ filter (`elem` "-|+") row)
+countGridRoute = sum . map (length . filter (`elem` "-|+"))
