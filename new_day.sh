@@ -24,7 +24,8 @@ else
     echo "main :: IO ()"
     echo "main = do"
     echo "  file_contents <- readFile \"data/D${DAY}.txt\""
-    echo "  putStrLn file_contents"
+    echo "  let file_lines = lines file_contents"
+    echo "  mapM_ putStrLn file_lines"
   } >> $HS_FILE
 fi
 
