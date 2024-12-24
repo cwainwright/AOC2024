@@ -60,6 +60,7 @@ library
 
     -- Modules exported by the library.
     exposed-modules:
+      Day9
       Day8
       Day7
       Day6
@@ -73,6 +74,7 @@ library
     other-modules: 
       Parser
       Helpers
+      Day9Old
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:

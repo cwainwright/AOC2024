@@ -6,17 +6,17 @@ safeIndex i xs = if i >= 0 && i < length xs then Just (xs !! i) else Nothing
 safeIndex2D :: (Int, Int) -> [[a]] -> Maybe a
 safeIndex2D (x, y) xss = (safeIndex y xss) >>= (safeIndex x)
 
-replace :: Int -> a -> [a] -> [a]
-replace i a xs =
+replace :: [a] -> Int -> a -> [a]
+replace xs i a =
   let before = take i xs
       after = drop (i + 1) xs
    in before ++ [a] ++ after
 
-replace2D :: (Int, Int) -> a -> [[a]] -> [[a]]
-replace2D (x, y) a xss =
+replace2D :: [[a]] -> (Int, Int) -> a -> [[a]]
+replace2D xss (x, y) a =
   let xs = xss !! y
-      newXS = replace x a xs
-   in replace y newXS xss
+      newXS = replace xs x a
+   in replace xss y newXS
 
 inRange :: [a] -> Int -> Bool
 inRange xs i = i >= 0 && i < length xs

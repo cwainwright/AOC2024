@@ -56,7 +56,7 @@ setGrid newGrid = do
 setCoordValue :: (Int, Int) -> Char -> MapState ()
 setCoordValue coords char = do
   grid <- getGrid
-  setGrid $ replace2D coords char grid
+  setGrid $ replace2D grid coords char
 
 getLoc :: MapState (Int, Int)
 getLoc = gets g_loc
